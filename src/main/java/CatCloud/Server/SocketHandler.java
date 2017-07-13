@@ -16,7 +16,6 @@ public class SocketHandler {
 	private BufferedReader reader;
 	private BufferedWriter writer;
 	private Thread thread;
-	private onResponceListener listener;
 
 	public SocketHandler(Socket socket) {
 		this.socket = socket;
@@ -24,7 +23,6 @@ public class SocketHandler {
 		try {
 			writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(),Charset.forName("UTF-8")));
 			reader = new BufferedReader(new InputStreamReader(socket.getInputStream(), Charset.forName("UTF-8")));
-			sendMessage("你好");
 		} catch (IOException e) {
 			
 			e.printStackTrace();
@@ -32,7 +30,37 @@ public class SocketHandler {
 		}
 		
 		
+		initThread();
 		
+	}
+
+	private void initThread() {
+		if(this.thread==null)
+		{
+			//开启新线程监听响应
+			this.thread=new Thread()
+			{
+				public void run() 
+				{
+
+						String line;
+						try {
+							while((line=reader.readLine())!=null)
+							{
+								//对请求进行解析
+								//获取请求类型 查找对应的请求处理器
+								System.out.println(line);
+								
+							}
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+
+				}
+			};
+			thread.start();
+		}
 	}
 
 	public void sendMessage(String msg) {
@@ -47,38 +75,6 @@ public class SocketHandler {
 		
 	}
 	
-	public void addOnResponceListener(onResponceListener listener) {
-		if(this.thread==null)
-		{
-			//开启新线程监听响应
-			this.thread=new Thread()
-			{
-				public void run() 
-				{
-
-						String line;
-						try {
-							while((line=reader.readLine())!=null)
-							{
-								if(listener!=null)
-								{
-									listener.onResponce(line);
-								}
-							}
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-
-				}
-			};
-			thread.start();
-		}
-		
-		this.listener = listener;
-		
-		
-	}
 	
 	
 }

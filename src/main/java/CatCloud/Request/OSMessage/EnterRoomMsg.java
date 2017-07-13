@@ -1,16 +1,16 @@
-package CatCloud.Message.OSMessage;
+package CatCloud.Request.OSMessage;
 
 import java.util.HashMap;
 
-import CatCloud.Message.Config;
+import CatCloud.Request.Config;
 
-public class CreateRoomMsg extends OSMessage {
+public class EnterRoomMsg extends OSMessage{
 
 	private String roomName;
 
 
-	public CreateRoomMsg(String roomName) {
-		super(Config.MSG_CREATE_ROOM);
+	public EnterRoomMsg(String roomName) {
+		super(Config.MSG_ENTER_ROOM);
 		// TODO Auto-generated constructor stub
 		this.roomName = roomName;
 	}

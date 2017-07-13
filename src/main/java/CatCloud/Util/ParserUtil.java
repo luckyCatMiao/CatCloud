@@ -5,9 +5,9 @@ import java.util.HashMap;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import CatCloud.Message.BaseMessage;
+import CatCloud.Request.BaseMessage;
 
-public class Parser {
+public class ParserUtil {
 
 	/**
 	 * 将消息解析成json字符串

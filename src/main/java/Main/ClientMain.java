@@ -10,22 +10,68 @@ import java.nio.charset.Charset;
 
 import CatCloud.Client.Client;
 import CatCloud.Client.onResponceListener;
+import CatCloud.Request.BaseMessage;
+import CatCloud.Request.BoardCastMessage;
+import CatCloud.Client.onResponceListener;
 
 public class ClientMain {
 
 	public static void main(String[] args) {
 		
-		Client client=new Client("localhost", 8999,new onResponceListener() {
-			
+		Client client=new Client("localhost", 8999);
+		
+		client.sendBoardCast("大家好",new onResponceListener<BoardCastMessage>() {
+
 			@Override
-			public void onResponce(String message) {
-				System.out.println("client1:"+message);
+			public void onResponce(BoardCastMessage responce) {
+				
+				System.out.println("成功");
+				
+			}
+
+			@Override
+			public void onFailed(BoardCastMessage responce) {
+				System.out.println("失败");
 				
 			}
 		});
 		
-		client.createRoom("testRoom");
-		client.enterRoom("testRoom");
+		
+		
+//		client.sendBoardCast("大家好",new onResponceListener<OBMessage>() {
+//
+//			@Override
+//			public void onResponce(OBMessage responce) {
+//				
+//				System.out.println("成功2");
+//				
+//			}
+//
+//			@Override
+//			public void onFailed(OBMessage responce) {
+//				System.out.println("失败2");
+//				
+//			}
+//		});
+		
+		
+//		client.createRoom("testRoom",new onResponceListener() {
+//			
+//			@Override
+//			public void onResponce(MessageResponce responce) {
+//				System.out.println("创建房间成功");
+//				
+//				client.enterRoom("testRoom",new onResponceListener() {
+//					
+//					@Override
+//					public void onResponce(MessageResponce responce) {
+//						System.out.println("加入房间成功");
+//					}
+//				});
+//				
+//			}
+//		});
+	
 		
 //		
 //		Client client2=new Client("localhost", 8999);

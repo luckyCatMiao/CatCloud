@@ -12,27 +12,32 @@ import java.util.LinkedList;
 
 public class Server {
 
-	private int port;
-	private ServerSocket serverSocket;
 
 	/**
-	 * 保存所有客户端对应的socket
+	 * 保存所有房间
 	 */
-	private LinkedList<SocketHandler> sockets=new LinkedList<>();
+	private LinkedList<Room> rooms=new LinkedList<>();
+	/**
+	 * 默认房间
+	 */
+	private Room defaultRoom=new Room("default");
+	
 	
 	public Server(int port) {
-		this.port = port;
+		
+		//添加默认房间
+		rooms.add(defaultRoom);
 		
 		
 		try {
-			serverSocket = new ServerSocket(port);
+			ServerSocket serverSocket = new ServerSocket(port);
 			
 			while(true)
 			{
 				Socket socket=serverSocket.accept();
-				
 				SocketHandler socketHandler=new SocketHandler(socket);
-				sockets.add(socketHandler);
+				//加入默认房间中
+				defaultRoom.addClient(socketHandler);
 
 			}
 	

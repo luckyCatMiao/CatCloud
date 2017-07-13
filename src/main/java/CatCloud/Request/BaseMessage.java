@@ -1,17 +1,27 @@
-package CatCloud.Message;
+package CatCloud.Request;
 
 import java.util.HashMap;
 
 import CatCloud.Util.Util;
 
+/**
+ * 消息基类
+ * @author Administrator
+ *
+ */
 public abstract class BaseMessage {
 
-	
-	protected String msg;
+	/**
+	 * 信息类型
+	 */
+	protected String type;
+	/**
+	 * 信息ID
+	 */
 	protected int id;
 
-	public BaseMessage(String msg) {
-		this.msg = msg;
+	public BaseMessage(String type) {
+		this.type = type;
 		//生成随机的键值代表信息ID
 		this.id=hashCode();
 	}
@@ -24,8 +34,8 @@ public abstract class BaseMessage {
 	public HashMap<String, String> getKeyValue()
 	{
 		HashMap<String, String> map=new HashMap<>();
-		map.put("msg", msg);
-		map.put("id", id+"");
+		map.put(Config.KEY_MSG, type);
+		map.put(Config.KEY_ID, id+"");
 		
 		return map;
 	}
@@ -34,9 +44,14 @@ public abstract class BaseMessage {
 	public int getId() {
 		return id;
 	}
+
+
+	public String getType() {
+		return type;
+	}
 	
 	
-		
+	
 
 	
 	
