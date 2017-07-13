@@ -6,6 +6,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import CatCloud.Client.Request.Config;
+import CatCloud.Server.Handler.MessageBean;
+
 public class Util {
 
 	/**
@@ -48,6 +54,24 @@ public class Util {
 		System.out.println(map);
 		
 		return map;
+	}
+
+	public static MessageBean parseJSONToMessageBean(JSONObject jsonObject) {
+		
+		try {
+			String msgType=jsonObject.getString(Config.KEY_MSG_TYPE);
+			String sendType=jsonObject.getString(Config.KEY_SEND_TYPE);
+			int id=Integer.parseInt(jsonObject.getString(Config.KEY_ID));
+			
+			return new MessageBean(msgType,sendType,id);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
+		return null;
 	}
 
 }

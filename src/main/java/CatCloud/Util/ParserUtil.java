@@ -5,7 +5,7 @@ import java.util.HashMap;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import CatCloud.Request.BaseMessage;
+import CatCloud.Client.Request.BaseMessage;
 
 public class ParserUtil {
 

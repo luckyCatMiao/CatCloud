@@ -14,14 +14,15 @@ import java.util.stream.Collectors;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import CatCloud.Request.BaseMessage;
-import CatCloud.Request.BoardCastMessage;
-import CatCloud.Request.Config;
-import CatCloud.Request.PrivateMessage;
-import CatCloud.Request.OSMessage.CreateRoomMsg;
-import CatCloud.Request.OSMessage.EnterRoomMsg;
-import CatCloud.Request.OSMessage.OSMessage;
+import CatCloud.Client.Request.BaseMessage;
+import CatCloud.Client.Request.BoardCastMessage;
+import CatCloud.Client.Request.Config;
+import CatCloud.Client.Request.PrivateMessage;
+import CatCloud.Client.Request.OSMessage.CreateRoomMsg;
+import CatCloud.Client.Request.OSMessage.EnterRoomMsg;
+import CatCloud.Client.Request.OSMessage.OSMessage;
 import CatCloud.Util.ParserUtil;
+import Main.HelloMessage;
 
 public class Client {
 
@@ -186,13 +187,14 @@ public class Client {
 	
 	
 	/**
-	 * 发送广播 对同一个房间里的人有效
-	 * @param msg
+	 * 发送广播消息 对同一个房间里的人有效
+	 * @param helloMessage
 	 */
-	public void sendBoardCast(String msg,onResponceListener listener) {
+	public void sendBoardCast(BaseMessage message,onResponceListener listener) {
 		
-		//创建广播消息
-		BoardCastMessage message=new BoardCastMessage(msg);
+		//设置为广播类型
+		message.setSendType(Config.SEND_TYPE_BOARDCAST);
+		//发送消息到服务器
 		sendMessage(message,listener);
 		
 	}
@@ -217,6 +219,7 @@ public class Client {
 						try {
 							while((line=reader.readLine())!=null)
 							{
+								System.out.println("receive:"+line);
 								//对消息进行处理
 								dealMessage(line);
 
@@ -237,9 +240,9 @@ public class Client {
 		//如果是对某条信息的回应消息
 		try {
 			JSONObject jsonObject=new JSONObject(message);
-			if(jsonObject.getString(Config.KEY_TYPE).equals(Config.TYPE_RESPONCE))
+			if(jsonObject.getString(Config.KEY_MSG_TYPE).equals(Config.TYPE_RESPONCE))
 			{
-				String msg=jsonObject.getString(Config.KEY_MSG);
+				
 				int id=Integer.parseInt(jsonObject.getString(Config.KEY_ID));
 				
 				//查找对应的监听器
@@ -276,7 +279,7 @@ public class Client {
 
 
 	/**
-	 * 发送回调消息
+	 * 发送消息到服务器
 	 * @param message
 	 * @param pListener
 	 */

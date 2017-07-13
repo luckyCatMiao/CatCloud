@@ -1,4 +1,4 @@
-package CatCloud.Request;
+package CatCloud.Client.Request;
 
 import java.util.HashMap;
 
@@ -12,19 +12,16 @@ import CatCloud.Util.Util;
 public class PrivateMessage extends BaseMessage{
 
 	protected int clientID;
-	private String message;
 
 	public PrivateMessage(int clientID, String message) {
-		super(Config.KEY_TYPE);
+		super(Config.KEY_SEND_TYPE,message);
 		this.clientID = clientID;
-		this.message = message;
 	}
 	
 	
 	@Override
 	public HashMap<String, String> getKeyValue() {
 		HashMap<String, String> map=super.getKeyValue();
-		map.put(Config.KEY_MSG, message);
 		map.put(Config.KEY_CLIENTID, clientID+"");
 		return map;
 	}

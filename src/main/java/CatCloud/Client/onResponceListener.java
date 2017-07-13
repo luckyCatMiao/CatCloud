@@ -1,6 +1,6 @@
 package CatCloud.Client;
 
-import CatCloud.Request.BaseMessage;
+import CatCloud.Client.Request.BaseMessage;
 
 public interface onResponceListener<T extends BaseMessage> {
 

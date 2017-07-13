@@ -10,8 +10,8 @@ import java.nio.charset.Charset;
 
 import CatCloud.Client.Client;
 import CatCloud.Client.onResponceListener;
-import CatCloud.Request.BaseMessage;
-import CatCloud.Request.BoardCastMessage;
+import CatCloud.Client.Request.BaseMessage;
+import CatCloud.Client.Request.BoardCastMessage;
 import CatCloud.Client.onResponceListener;
 
 public class ClientMain {
@@ -20,23 +20,24 @@ public class ClientMain {
 		
 		Client client=new Client("localhost", 8999);
 		
-		client.sendBoardCast("大家好",new onResponceListener<BoardCastMessage>() {
+		client.sendBoardCast(new HelloMessage(),new onResponceListener<HelloMessage>() {
 
 			@Override
-			public void onResponce(BoardCastMessage responce) {
+			public void onResponce(HelloMessage responce) {
 				
 				System.out.println("成功");
 				
 			}
 
 			@Override
-			public void onFailed(BoardCastMessage responce) {
+			public void onFailed(HelloMessage responce) {
 				System.out.println("失败");
 				
 			}
 		});
 		
 		
+		client.addHandler();
 		
 //		client.sendBoardCast("大家好",new onResponceListener<OBMessage>() {
 //
