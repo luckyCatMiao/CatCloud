@@ -11,6 +11,7 @@ import java.nio.charset.Charset;
 import CatCloud.Client.Client;
 import CatCloud.Client.onResponceListener;
 import CatCloud.Client.Message.ClientMessage;
+import CatCloud.Client.Message.OSMessage.CreateRoomMsg;
 import CatCloud.Client.onResponceListener;
 
 public class ClientMain {
@@ -23,7 +24,9 @@ public class ClientMain {
 		//test1(client);
 		//test2(client);
 		//test3(client);
-		
+		test4(client);
+		test5(client);
+		test6(client);
 		
 		//client.addHandler();
 		
@@ -44,22 +47,7 @@ public class ClientMain {
 //		});
 		
 		
-//		client.createRoom("testRoom",new onResponceListener() {
-//			
-//			@Override
-//			public void onResponce(MessageResponce responce) {
-//				System.out.println("创建房间成功");
-//				
-//				client.enterRoom("testRoom",new onResponceListener() {
-//					
-//					@Override
-//					public void onResponce(MessageResponce responce) {
-//						System.out.println("加入房间成功");
-//					}
-//				});
-//				
-//			}
-//		});
+		
 	
 		
 //		
@@ -81,6 +69,67 @@ public class ClientMain {
 	
 	
 		
+	}
+
+	private static void test6(Client client) {
+		client.getRoomHelper().exitRoom("testRoom",new onResponceListener<ClientMessage>() {
+
+			@Override
+			public void onResponce(ClientMessage message) {
+				System.out.println("退出房间成功");
+				
+			}
+
+			@Override
+			public void onFailed(ClientMessage message) {
+				
+				
+			}
+			
+		
+		});
+		
+	}
+
+	private static void test5(Client client) {
+		
+		client.getRoomHelper().enterRoom("testRoom",new onResponceListener<ClientMessage>() {
+
+			@Override
+			public void onResponce(ClientMessage message) {
+				System.out.println("进入房间成功");
+				
+			}
+
+			@Override
+			public void onFailed(ClientMessage message) {
+				
+				
+			}
+			
+		
+		});
+		
+	}
+
+	public static void test4(Client client) {
+		client.getRoomHelper().createRoom("testRoom",new onResponceListener<ClientMessage>() {
+
+			@Override
+			public void onResponce(ClientMessage message) {
+				
+				System.out.println("创建房间成功");
+				
+			}
+
+			@Override
+			public void onFailed(ClientMessage message) {
+				
+				
+			}
+			
+		
+		});
 	}
 
 	public static void test3(Client client) {

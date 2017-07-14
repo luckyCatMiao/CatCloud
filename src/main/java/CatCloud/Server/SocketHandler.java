@@ -177,6 +177,10 @@ public class SocketHandler {
 		
 		getRoom().sendBoardCast(msg,clientID);
 	}
+
+	public Server getServer() {
+		return server;
+	}
 	
 	
 }

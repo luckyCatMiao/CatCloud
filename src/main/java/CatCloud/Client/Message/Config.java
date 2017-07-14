@@ -49,14 +49,20 @@ public class Config {
 	 * 获取id信息
 	 */
 	public static final String TYPE_GET_CLIENT_ID = "getID";
-	
-	
-	
 	/**
-	 * 协议内部信息值
+	 * 创建房间
 	 */
-	final static public String MSG_CREATE_ROOM="create_room";
-	final static public String MSG_ENTER_ROOM="enter_room";
+	final static public String TYPE_CREATE_ROOM="create_room";
+	/**
+	 * 进入房间
+	 */
+	final static public String TYPE_ENTER_ROOM="enter_room";
+	/**
+	 * 离开房间
+	 */
+	final static public String TYPE_EXIT_ROOM="exit_room";
+	
+	
 	
 	
 	

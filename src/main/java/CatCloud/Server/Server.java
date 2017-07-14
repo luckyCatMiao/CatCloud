@@ -20,6 +20,9 @@ import CatCloud.Server.Handler.BoardCastRequestHandler;
 import CatCloud.Server.Handler.GetClientIDHandler;
 import CatCloud.Server.Handler.MessageBean;
 import CatCloud.Server.Handler.PrivateMessageHandler;
+import CatCloud.Server.Handler.RoomHandler.CreateRoomHandler;
+import CatCloud.Server.Handler.RoomHandler.EnterRoomHandler;
+import CatCloud.Server.Handler.RoomHandler.ExitRoomHandler;
 
 public class Server {
 
@@ -84,6 +87,9 @@ public class Server {
 		addHandler(new BoardCastRequestHandler());
 		addHandler(new PrivateMessageHandler());
 		addHandler(new GetClientIDHandler());
+		addHandler(new CreateRoomHandler());
+		addHandler(new EnterRoomHandler());
+		addHandler(new ExitRoomHandler());
 	}
 
 
@@ -107,6 +113,78 @@ public class Server {
 		//返回所有符合条件的处理器
 
 		return handlers.stream().filter(h->h.canHandlerMessage(bean)).collect(Collectors.toList());
+	}
+
+
+	/**
+	 * 创建房间
+	 * @param roomName
+	 */
+	public void createRoom(String roomName) {
+		Room room=new Room(roomName);
+		rooms.add(room);
+		
+	}
+
+
+	/**
+	 * 离开房间
+	 * @param clientID
+	 * @param roomName
+	 */
+	public void exitRoom(int clientID, String roomName) {
+		Room room=getRoomByName(roomName);
+		room.removeClient(getClientByID(clientID));
+	}
+
+
+	/**
+	 * 进入房间
+	 * @param clientID
+	 * @param roomName
+	 */
+	public void enterRoom(int clientID, String roomName) {
+		
+		Room room=getRoomByName(roomName);
+		room.addClient(getClientByID(clientID));
+		
+	}
+
+
+	/**
+	 * 根据id查找client
+	 * @param clientID
+	 * @return
+	 */
+	private SocketHandler getClientByID(int clientID) {
+		for(SocketHandler handler:defaultRoom.getClients())
+		{
+			if(handler.getClientID()==clientID)
+			{
+				return handler;
+			}
+		}
+		
+		throw new RuntimeException("client "+clientID+" don't exist!");
+	}
+
+
+	/**
+	 * 查找房间
+	 * @param roomName
+	 * @return
+	 */
+	private Room getRoomByName(String roomName) {
+
+		for(Room room:rooms)
+		{
+			if(room.getName().equals(roomName))
+			{
+				
+			}
+		}
+		
+		throw new RuntimeException(roomName+" don't exist!");
 	}
 	
 

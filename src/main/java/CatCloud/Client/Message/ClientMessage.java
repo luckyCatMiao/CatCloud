@@ -6,7 +6,7 @@ import java.util.Map;
 import org.json.JSONObject;
 
 import CatCloud.Util.BaseMessage;
-import CatCloud.Util.Util;
+
 
 /**
  * 客户端发给服务器的消息基类

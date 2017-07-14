@@ -127,4 +127,16 @@ public class Room {
 		
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	public LinkedList<SocketHandler> getClients() {
+		// TODO Auto-generated method stub
+		return sockets;
+	}
+
+	
+	
+	
 }

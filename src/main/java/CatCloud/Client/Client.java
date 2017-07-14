@@ -81,7 +81,7 @@ public class Client {
 	/**
 	 * 负责处理和房间有关的操作
 	 */
-	private RoomHelper roomHelper=new RoomHelper();
+	private RoomHelper roomHelper=new RoomHelper(this);
 	
 	public Client(String ip, int port) {
 		this.ip = ip;
@@ -390,6 +390,11 @@ public class Client {
 
 	public int getClientID() {
 		return clientID;
+	}
+
+
+	public RoomHelper getRoomHelper() {
+		return roomHelper;
 	}
 
 	
