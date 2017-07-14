@@ -15,13 +15,20 @@ import java.util.Map;
 import java.util.logging.Handler;
 import java.util.stream.Collectors;
 
-import CatCloud.Server.Handler.BaseRequestHandler;
+import CatCloud.Server.Handler.BaseServerHandler;
 import CatCloud.Server.Handler.BoardCastRequestHandler;
+import CatCloud.Server.Handler.GetClientIDHandler;
 import CatCloud.Server.Handler.MessageBean;
+import CatCloud.Server.Handler.PrivateMessageHandler;
 
 public class Server {
 
 
+	/**
+	 * 是否是开发模式
+	 */
+	private boolean debug=true;
+	
 	/**
 	 * 保存所有房间
 	 */
@@ -33,7 +40,7 @@ public class Server {
 	/**
 	 * 请求处理器
 	 */
-	private LinkedList<BaseRequestHandler> handlers=new LinkedList<>();
+	private LinkedList<BaseServerHandler> handlers=new LinkedList<>();
 	
 	
 	public Server(int port) {
@@ -75,6 +82,8 @@ public class Server {
 	private void addDefaultHandler() {
 		
 		addHandler(new BoardCastRequestHandler());
+		addHandler(new PrivateMessageHandler());
+		addHandler(new GetClientIDHandler());
 	}
 
 
@@ -82,7 +91,7 @@ public class Server {
 	 * 添加请求处理器
 	 * @param handler
 	 */
-	public void addHandler(BaseRequestHandler handler)
+	public void addHandler(BaseServerHandler handler)
 	{
 		handlers.add(handler);
 	}
@@ -93,7 +102,7 @@ public class Server {
 	 * @param bean
 	 * @return
 	 */
-	public List<BaseRequestHandler> getHandler(MessageBean bean) {
+	public List<BaseServerHandler> getHandler(MessageBean bean) {
 		
 		//返回所有符合条件的处理器
 

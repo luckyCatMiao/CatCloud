@@ -10,8 +10,7 @@ import java.nio.charset.Charset;
 
 import CatCloud.Client.Client;
 import CatCloud.Client.onResponceListener;
-import CatCloud.Client.Request.BaseMessage;
-import CatCloud.Client.Request.BoardCastMessage;
+import CatCloud.Client.Message.ClientMessage;
 import CatCloud.Client.onResponceListener;
 
 public class ClientMain {
@@ -20,24 +19,15 @@ public class ClientMain {
 		
 		Client client=new Client("localhost", 8999);
 		
-		client.sendBoardCast(new HelloMessage(),new onResponceListener<HelloMessage>() {
-
-			@Override
-			public void onResponce(HelloMessage responce) {
-				
-				System.out.println("成功");
-				
-			}
-
-			@Override
-			public void onFailed(HelloMessage responce) {
-				System.out.println("失败");
-				
-			}
-		});
+		
+		System.out.println(client.getClientID());
+		
+		//test1(client);
+		//test2(client);
+		//test3(client);
 		
 		
-		client.addHandler();
+		//client.addHandler();
 		
 //		client.sendBoardCast("大家好",new onResponceListener<OBMessage>() {
 //
@@ -93,5 +83,57 @@ public class ClientMain {
 	
 	
 		
+	}
+
+	public static void test3(Client client) {
+		client.sendToServer(new HelloMessage(),new onResponceListener<HelloMessage>() {
+
+			@Override
+			public void onResponce(HelloMessage responce) {
+
+				
+			}
+
+			@Override
+			public void onFailed(HelloMessage responce) {	
+				
+			}
+		});
+	}
+
+	public static void test2(Client client) {
+		client.sendToClient(new HelloMessage(),new onResponceListener<HelloMessage>() {
+
+			@Override
+			public void onResponce(HelloMessage responce) {
+				
+				System.out.println("成功");
+				
+			}
+
+			@Override
+			public void onFailed(HelloMessage responce) {
+				System.out.println("失败");
+				
+			}
+		}, 666);
+	}
+
+	public static void test1(Client client) {
+		client.sendBoardCast(new HelloMessage(),new onResponceListener<HelloMessage>() {
+
+			@Override
+			public void onResponce(HelloMessage responce) {
+				
+				System.out.println("成功");
+				
+			}
+
+			@Override
+			public void onFailed(HelloMessage responce) {
+				System.out.println("失败");
+				
+			}
+		});
 	}
 }

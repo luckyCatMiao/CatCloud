@@ -1,8 +1,8 @@
-package CatCloud.Client.Request.OSMessage;
+package CatCloud.Client.Message.OSMessage;
 
 import java.util.HashMap;
 
-import CatCloud.Client.Request.Config;
+import CatCloud.Client.Message.Config;
 
 public class EnterRoomMsg extends OSMessage{
 

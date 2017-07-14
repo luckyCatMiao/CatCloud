@@ -2,8 +2,17 @@ package CatCloud.Server.Handler;
 
 public class MessageBean {
 
+	/**
+	 * 信息类型
+	 */
 	private String msgType;
+	/**
+	 * 传播类型
+	 */
 	private String sendType;
+	/**
+	 * 信息id
+	 */
 	private int id;
 
 	public MessageBean(String msgType, String sendType, int id) {

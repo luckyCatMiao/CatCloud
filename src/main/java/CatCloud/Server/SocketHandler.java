@@ -13,11 +13,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import CatCloud.Client.onResponceListener;
-import CatCloud.Client.Request.BaseMessage;
-import CatCloud.Client.Request.Config;
-import CatCloud.Server.Handler.BaseRequestHandler;
+import CatCloud.Client.Message.ClientMessage;
+import CatCloud.Client.Message.Config;
+import CatCloud.Server.Handler.BaseServerHandler;
 import CatCloud.Server.Handler.MessageBean;
-import CatCloud.Server.Message.ResponceMessage;
+import CatCloud.Server.Message.ServerMessage;
 import CatCloud.Util.ParserUtil;
 import CatCloud.Util.Util;
 
@@ -31,7 +31,10 @@ public class SocketHandler {
 	 * 所在的房间
 	 */
 	private Room room;
-	
+	/**
+	 * 对应的ID
+	 */
+	private int clientID;
 	
 	private Socket socket;
 	private BufferedReader reader;
@@ -54,6 +57,7 @@ public class SocketHandler {
 		
 		
 		initThread();
+		clientID=hashCode();
 		
 	}
 
@@ -70,7 +74,7 @@ public class SocketHandler {
 						try {
 							while((line=reader.readLine())!=null)
 							{
-								System.out.println("receive:"+line);
+								System.out.println("receive from id:"+clientID+",msg:"+line);
 								
 								//对请求进行解析
 								MessageBean bean = null;
@@ -79,21 +83,25 @@ public class SocketHandler {
 									 jsonObject=new JSONObject(line);
 									 bean=Util.parseJSONToMessageBean(jsonObject);
 									 
-									//发送一条默认的回应消息
-									sendMessage(new ResponceMessage(bean.getId()));
 										
 									//根据信息数据 查找处理器
-									List<BaseRequestHandler> handlers= server.getHandler(bean);
-									for(BaseRequestHandler handler:handlers)
+									List<BaseServerHandler> handlers= server.getHandler(bean);
+									for(BaseServerHandler handler:handlers)
 									{
-											//处理该消息
-										handler.handlerMessage(jsonObject,bean, room);
+										//组装成请求对象
+										TCPRequest request=new TCPRequest(jsonObject,bean,SocketHandler.this);
+										//创建回应对象
+										TCPResponce responce=new TCPResponce(jsonObject,bean,SocketHandler.this);
+										
+										//处理该消息
+										handler.handlerMessage(request,responce);
 									}
 									
 									
 								} catch (JSONException e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
+									System.err.println("unvalid request data:"+line);
 								}
 								
 								
@@ -113,11 +121,15 @@ public class SocketHandler {
 		}
 	}
 
-	protected void sendMessage(BaseMessage message) {
+	/**
+	 * 发送消息
+	 * @param message
+	 */
+	public void sendMessage(ServerMessage message) {
 		//发送消息
 		String jsonString=ParserUtil.parseMsgToJson(message);
 		
-		System.out.println("send:"+jsonString);
+		
 		sendString(jsonString);
 	}
 
@@ -126,6 +138,8 @@ public class SocketHandler {
 	 * @param msg
 	 */
 	public void sendString(String msg) {
+		System.out.println("send to id:"+clientID+",msg:"+msg);
+		
 		try {
 			writer.write(msg+"\n");
 			writer.flush();
@@ -135,6 +149,14 @@ public class SocketHandler {
 		}
 		
 		
+	}
+
+	public int getClientID() {
+		return clientID;
+	}
+
+	public Room getRoom() {
+		return room;
 	}
 
 	

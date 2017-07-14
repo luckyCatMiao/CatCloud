@@ -14,13 +14,9 @@ import java.util.stream.Collectors;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import CatCloud.Client.Request.BaseMessage;
-import CatCloud.Client.Request.BoardCastMessage;
-import CatCloud.Client.Request.Config;
-import CatCloud.Client.Request.PrivateMessage;
-import CatCloud.Client.Request.OSMessage.CreateRoomMsg;
-import CatCloud.Client.Request.OSMessage.EnterRoomMsg;
-import CatCloud.Client.Request.OSMessage.OSMessage;
+import CatCloud.Client.Message.ClientMessage;
+import CatCloud.Client.Message.Config;
+import CatCloud.Client.Message.OSMessage.GetClientIDMessage;
 import CatCloud.Util.ParserUtil;
 import Main.HelloMessage;
 
@@ -40,9 +36,9 @@ public class Client {
 		/**
 		 * 对应的消息
 		 */
-		private BaseMessage message;
+		private ClientMessage message;
 
-		public onIDResponceListener(int id, int maxTime, onResponceListener pListener, BaseMessage message) {
+		public onIDResponceListener(int id, int maxTime, onResponceListener pListener, ClientMessage message) {
 			this.msgID = id;
 			// TODO Auto-generated constructor stub
 			this.lifeTime = maxTime;
@@ -73,7 +69,7 @@ public class Client {
 	/**
 	 * 服务器端的客户端编号
 	 */
-	private int ClientID;
+	private int clientID=-1;
 	/**
 	 * 响应超时时间
 	 */
@@ -82,7 +78,10 @@ public class Client {
 	 * 消息回应监听器
 	 */
 	private List<onIDResponceListener> listeners=new LinkedList<>();
-	
+	/**
+	 * 负责处理和房间有关的操作
+	 */
+	private RoomHelper roomHelper=new RoomHelper();
 	
 	public Client(String ip, int port) {
 		this.ip = ip;
@@ -98,12 +97,79 @@ public class Client {
 			e.printStackTrace();
 			throw new RuntimeException("create socket failed!!");
 		}
+
 		
-		
-		//初始化监听输入线程
+		//初始化监听消息线程
 		initOnResponceThread();
 		//初始化监听消息超时线程
 		initReduceLifeThread();
+		
+		//进行阻塞直到获得服务端的客户端id
+		tryGetClientID();
+	}
+
+
+	private void tryGetClientID(){
+		
+		
+		new Thread()
+		{
+			@Override
+			public void run() {
+				
+				sendToServer(new GetClientIDMessage(),new onResponceListener<GetClientIDMessage>() {
+
+					@Override
+					public void onResponce(GetClientIDMessage responce) {
+						clientID=responce.getClientID();
+						
+					}
+
+					@Override
+					public void onFailed(GetClientIDMessage responce) {
+						clientID=-999;
+						
+					}
+				});
+			}
+		}.start();
+		
+		while(true)
+		{
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if(clientID>=0)
+			{
+				break;
+			}
+			if(clientID==-999)
+			{
+				//获取客户端id失败
+				throw new RuntimeException("get clientID failed!!");
+			}
+		}
+		
+	}
+
+
+	
+	/**
+	 * 向服务器发送消息
+	 * @param message
+	 * @param listener
+	 */
+	public void sendToServer(ClientMessage message,onResponceListener listener) {
+		//设置为服务器内部处理类型
+		message.setSendType(Config.SEND_TYPE_TOSERVER);
+
+		//发送消息到服务器
+		sendMessage(message,listener);
+				
+		
 	}
 
 
@@ -153,10 +219,14 @@ public class Client {
 	 * 发送一对一消息
 	 * @param msg
 	 */
-	public void sendToClient(String msg,int clientID,onResponceListener listener) {
+	public void sendToClient(ClientMessage message,onResponceListener listener,int clientID) {
 		
-		//创建一对一消息
-		PrivateMessage message=new PrivateMessage(clientID,msg);
+		//设置为一对一类型
+		message.setSendType(Config.SEND_TYPE_TOONE);
+		//设置目标客户端ID
+		message.setMessage(clientID+"");
+		
+		//发送消息到服务器
 		sendMessage(message,listener);
 		
 	}
@@ -167,7 +237,17 @@ public class Client {
 	 * 发送一条消息 不进行回调
 	 * @param message
 	 */
-	public void sendMessage(BaseMessage message) {
+	private void sendMessage(ClientMessage message) {
+		
+		//检查消息是否有类型
+		if(message.getSendType()==null)
+		{
+			throw new RuntimeException("message need a sendType!");
+		}
+		if(message.getType()==null)
+		{
+			throw new RuntimeException("message need a type!");
+		}
 		
 		sendMessage(message, null);
 	}
@@ -190,7 +270,7 @@ public class Client {
 	 * 发送广播消息 对同一个房间里的人有效
 	 * @param helloMessage
 	 */
-	public void sendBoardCast(BaseMessage message,onResponceListener listener) {
+	public void sendBoardCast(ClientMessage message,onResponceListener listener) {
 		
 		//设置为广播类型
 		message.setSendType(Config.SEND_TYPE_BOARDCAST);
@@ -237,45 +317,48 @@ public class Client {
 
 
 	private void dealMessage(String message) {		
-		//如果是对某条信息的回应消息
+		
 		try {
 			JSONObject jsonObject=new JSONObject(message);
+			//如果是回应消息
 			if(jsonObject.getString(Config.KEY_MSG_TYPE).equals(Config.TYPE_RESPONCE))
 			{
 				
 				int id=Integer.parseInt(jsonObject.getString(Config.KEY_ID));
 				
 				//查找对应的监听器
+				onIDResponceListener remove = null;
 				for(onIDResponceListener listener:listeners)
 				{
 					if(listener.msgID==id)
 					{
-						listener.pListener.onResponce(listener.message);
+						//调用方法处理返回数据
+						ClientMessage baseMessage=listener.message;
+						baseMessage.dealResponce(jsonObject);
 						
+						//回调监听接口
+						listener.pListener.onResponce(listener.message);
+						remove=listener;
+						break;
 					}
 				}
+				//移除该监听器
+				if(remove!=null){listeners.remove(remove);}
+				
+			}
+			//否则查找处理器处理该消息
+			else
+			{
+				
 			}
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-	}
-
-
-	/**
-	 * 创建房间
-	 * @param string
-	 */
-	public void createRoom(String name,onResponceListener pListener) {
 		
-		OSMessage message=new CreateRoomMsg(name);
-		//发送回调消息
-		sendMessage(message,pListener);	
 		
 	}
-
-
 
 
 	/**
@@ -283,7 +366,7 @@ public class Client {
 	 * @param message
 	 * @param pListener
 	 */
-	public void sendMessage(BaseMessage message, onResponceListener pListener) {
+	private void sendMessage(ClientMessage message, onResponceListener pListener) {
 		
 		//添加回调监听
 		onIDResponceListener listener=new onIDResponceListener(message.getId(),maxTime,pListener,message);
@@ -295,18 +378,6 @@ public class Client {
 	}
 
 
-	/**
-	 * 进入房间
-	 * @param string
-	 */
-	public void enterRoom(String name,onResponceListener listener) {
-		
-		OSMessage message=new EnterRoomMsg(name);
-		sendMessage(message,listener);
-		
-	}
-
-
 	public int getMaxTime() {
 		return maxTime;
 	}
@@ -314,6 +385,11 @@ public class Client {
 
 	public void setMaxTime(int maxTime) {
 		this.maxTime = maxTime;
+	}
+
+
+	public int getClientID() {
+		return clientID;
 	}
 
 	

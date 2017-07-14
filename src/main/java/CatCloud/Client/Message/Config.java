@@ -1,4 +1,4 @@
-package CatCloud.Client.Request;
+package CatCloud.Client.Message;
 
 public class Config {
 
@@ -21,20 +21,17 @@ public class Config {
 	 * 信息发送类型(由服务器读取处理)
 	 * 客户端单对单通信
 	 */
-//	final static public String SEND_TYPE_TOONE="toone";
+	final static public String SEND_TYPE_TOONE="toone";
 	/**
 	 * 客户端广播
 	 */
 	final static public String SEND_TYPE_BOARDCAST="boardcast";
-//	/**
-//	 * 客户端服务器内部通信
-//	 */
-//	final static public String TYPE_TOSERVER="toserver";
-//	/**
-//	 * 对某信息的回应消息
-//	 */
-//	final static public String TYPE_RESPONCE="responce";
-//	/**
+	/**
+	 * 客户端服务器内部通信
+	 */
+	final static public String SEND_TYPE_TOSERVER="toserver";
+
+	
 //	 * 服务器传来的系统消息
 //	 */
 //	final static public String TYPE_SYSTEM="system";
@@ -44,7 +41,14 @@ public class Config {
 	/**
 	 * 信息类型(默认类型)
 	 */
+	/**
+	 * 服务器端应答消息
+	 */
 	public static final String TYPE_RESPONCE = "responce";
+	/**
+	 * 获取id信息
+	 */
+	public static final String TYPE_GET_CLIENT_ID = "getID";
 	
 	
 	
@@ -53,6 +57,7 @@ public class Config {
 	 */
 	final static public String MSG_CREATE_ROOM="create_room";
 	final static public String MSG_ENTER_ROOM="enter_room";
+	
 	
 	
 	

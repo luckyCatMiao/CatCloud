@@ -9,7 +9,7 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import CatCloud.Client.Request.Config;
+import CatCloud.Client.Message.Config;
 import CatCloud.Server.Handler.MessageBean;
 
 public class Util {

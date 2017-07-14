@@ -4,7 +4,7 @@ import java.util.LinkedList;
 
 import org.json.JSONObject;
 
-import CatCloud.Client.Request.BaseMessage;
+import CatCloud.Client.Message.ClientMessage;
 
 /**
  * 服务器房间 模拟游戏中的房间 广播之类的都是房间范围 一个玩家可以在多个房间中
@@ -35,7 +35,7 @@ public class Room {
 	 * 向房间内的客户端广播信息
 	 * @param message
 	 */
-	public void boardCast(BaseMessage message) {
+	public void boardCast(ClientMessage message) {
 		
 	}
 
@@ -46,6 +46,22 @@ public class Room {
 	public void boardCast(String json) {
 
 		sockets.forEach(s->s.sendString(json));
+		
+	}
+
+	/**
+	 * 给对应ID的客户端发送消息
+	 * @param string
+	 * @param id
+	 */
+	public void sendTo(String string, int id) {
+		for(SocketHandler handler:sockets)
+		{
+			if(handler.getClientID()==id)
+			{
+				handler.sendString(string);
+			}
+		}
 		
 	}
 

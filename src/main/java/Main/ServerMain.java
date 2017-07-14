@@ -17,7 +17,7 @@ public class ServerMain {
 		
 		
 		Server server=new Server(8999);
-		
+		server.addHandler(new ServerHelloHandler());
 	
 	
 	}
