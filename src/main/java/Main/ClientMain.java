@@ -19,9 +19,7 @@ public class ClientMain {
 		
 		Client client=new Client("localhost", 8999);
 		
-		
-		System.out.println(client.getClientID());
-		
+
 		//test1(client);
 		//test2(client);
 		//test3(client);
@@ -116,7 +114,7 @@ public class ClientMain {
 				System.out.println("失败");
 				
 			}
-		}, 666);
+		}, client.getClientID());
 	}
 
 	public static void test1(Client client) {

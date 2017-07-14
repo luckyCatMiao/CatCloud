@@ -19,8 +19,13 @@ import CatCloud.Server.Handler.BaseServerHandler;
 import CatCloud.Server.Handler.MessageBean;
 import CatCloud.Server.Message.ServerMessage;
 import CatCloud.Util.ParserUtil;
-import CatCloud.Util.Util;
 
+
+/**
+ * 与客户端socket对应的socket包装类
+ * @author Administrator
+ *
+ */
 public class SocketHandler {
 
 	/**
@@ -57,6 +62,7 @@ public class SocketHandler {
 		
 		
 		initThread();
+		//初始化id为hashCode，保证唯一值
 		clientID=hashCode();
 		
 	}
@@ -81,7 +87,7 @@ public class SocketHandler {
 								JSONObject jsonObject = null;
 								try {
 									 jsonObject=new JSONObject(line);
-									 bean=Util.parseJSONToMessageBean(jsonObject);
+									 bean=ParserUtil.parseJSONToMessageBean(jsonObject);
 									 
 										
 									//根据信息数据 查找处理器
@@ -130,14 +136,14 @@ public class SocketHandler {
 		String jsonString=ParserUtil.parseMsgToJson(message);
 		
 		
-		sendString(jsonString);
+		sendMessage(jsonString);
 	}
 
 	/**
 	 * 向该client发送消息
 	 * @param msg
 	 */
-	public void sendString(String msg) {
+	public void sendMessage(String msg) {
 		System.out.println("send to id:"+clientID+",msg:"+msg);
 		
 		try {
@@ -160,7 +166,17 @@ public class SocketHandler {
 	}
 
 	
+	public void sendBoardCast(ServerMessage message) {
+		
+		getRoom().sendBoardCast(message,clientID);
+		
+	}
+
 	
+	public void sendBoardCast(String msg) {
+		
+		getRoom().sendBoardCast(msg,clientID);
+	}
 	
 	
 }

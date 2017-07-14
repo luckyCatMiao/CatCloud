@@ -32,7 +32,7 @@ public class BoardCastRequestHandler extends BaseServerHandler{
 		JSONObject data=request.getRequestData();
 		data.remove(Config.KEY_SEND_TYPE);
 		//转发
-		request.getSocketHandler().getRoom().boardCast(data.toString());
+		request.getSocketHandler().sendBoardCast(data.toString());
 		//发送默认回应
 		responce.defaultResponce();
 		

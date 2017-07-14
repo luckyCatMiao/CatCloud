@@ -44,7 +44,7 @@ public class TCPResponce {
 	 * @param msg
 	 */
 	public void sendString(String msg) {
-		socketHandler.sendString(msg);
+		socketHandler.sendMessage(msg);
 		
 	}
 
